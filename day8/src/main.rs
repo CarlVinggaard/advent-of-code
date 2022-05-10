@@ -107,7 +107,7 @@ impl<'a> Configuration<'a> {
     }
 
     fn interpret(&self) -> Result<u32, &str> {
-        if [self.b, self.e].contains(&None) {
+        if [self.b, self.e, self.c].contains(&None) {
             return Err("Configuration not solved")
         }
 
@@ -120,10 +120,12 @@ impl<'a> Configuration<'a> {
                 4 => { result[i] = 4; continue },
                 7 => { result[i] = 8; continue },
                 6 => {
-                    if code.contains(self.e.unwrap()) {
-                        result[i] = 9
-                    } else {
+                    if !code.contains(self.e.unwrap()) {
+                        result[i] = 9;
+                    } else if !code.contains(self.c.unwrap()) {
                         result[i] = 6
+                    } else {
+                        result[i] = 0
                     }
                     continue
                 },
