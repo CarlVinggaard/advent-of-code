@@ -1,12 +1,12 @@
 use std::fs;
 
-#[derive (Clone, Copy)]
+#[derive(Clone, Copy)]
 struct Node {
     distance: u32,
     weight: u32,
     visited: bool,
     x: usize,
-    y: usize
+    y: usize,
 }
 
 fn wrap(w: u32) -> u32 {
@@ -21,7 +21,7 @@ fn extend(weights: Vec<Vec<u32>>, factor: u32) -> Vec<Vec<u32>> {
     // Extend width
     for i in 0..factor {
         for (j, row) in weights.iter().enumerate() {
-            let mut incremented_row: Vec<u32> = row.iter().map(|w| { wrap(w + i) }).collect();
+            let mut incremented_row: Vec<u32> = row.iter().map(|w| wrap(w + i)).collect();
 
             extended[j].append(&mut incremented_row)
         }
@@ -31,9 +31,10 @@ fn extend(weights: Vec<Vec<u32>>, factor: u32) -> Vec<Vec<u32>> {
 
     // Extend height
     for i in 1..factor {
-        let mut incremented_tile: Vec<Vec<u32>> = tile_copy.iter().map(|row| {
-            row.iter().map(|w| { wrap(w + i) }).collect()
-        }).collect();
+        let mut incremented_tile: Vec<Vec<u32>> = tile_copy
+            .iter()
+            .map(|row| row.iter().map(|w| wrap(w + i)).collect())
+            .collect();
         extended.append(&mut incremented_tile);
     }
 
@@ -43,19 +44,28 @@ fn extend(weights: Vec<Vec<u32>>, factor: u32) -> Vec<Vec<u32>> {
 fn main() {
     let input = fs::read_to_string("./input.txt").expect("There was an error reading the file");
 
-    let initial_weights: Vec<Vec<u32>> = input.lines().map(|line| {
-        line.chars().map(|c| {
-            c.to_digit(10).unwrap()
-        }).collect()
-    }).collect();
-    
+    let initial_weights: Vec<Vec<u32>> = input
+        .lines()
+        .map(|line| line.chars().map(|c| c.to_digit(10).unwrap()).collect())
+        .collect();
     let weights = extend(initial_weights.clone(), 5);
 
-    let mut nodes: Vec<Vec<Node>> = weights.iter().enumerate().map(|(x, row)| {
-        row.iter().enumerate().map(|(y, weight)| {
-            Node { distance: 9999, weight: *weight, x, y, visited: false }
-        }).collect()
-    }).collect();
+    let mut nodes: Vec<Vec<Node>> = weights
+        .iter()
+        .enumerate()
+        .map(|(x, row)| {
+            row.iter()
+                .enumerate()
+                .map(|(y, weight)| Node {
+                    distance: 9999,
+                    weight: *weight,
+                    x,
+                    y,
+                    visited: false,
+                })
+                .collect()
+        })
+        .collect();
 
     let dim_x = nodes.len() as isize;
     let dim_y = nodes[0].len() as isize;
@@ -78,7 +88,9 @@ fn main() {
             let y = current_point.y as isize + y1;
 
             // Ignore point if it is out of bounds
-            if x < 0 || y < 0 || x > (dim_x - 1) || y > (dim_y - 1) { continue }
+            if x < 0 || y < 0 || x > (dim_x - 1) || y > (dim_y - 1) {
+                continue;
+            }
 
             let node = &nodes[x as usize][y as usize].clone();
 
@@ -98,15 +110,20 @@ fn main() {
         nodes[current.0][current.1].visited = true;
 
         // Remove current from unvisited
-        unvisited = unvisited.into_iter().filter(|(x, y)| x != &current.0 || y != &current.1 ).collect();
+        unvisited = unvisited
+            .into_iter()
+            .filter(|(x, y)| x != &current.0 || y != &current.1)
+            .collect();
 
-
-        unvisited.sort_by(|a, b| nodes[a.0][a.1].distance.cmp(&nodes[b.0][b.1].distance) );
+        unvisited.sort_by(|a, b| nodes[a.0][a.1].distance.cmp(&nodes[b.0][b.1].distance));
 
         if unvisited.len() > 0 {
             current = unvisited[0];
         }
     }
 
-    println!("Shortest distance to point: {}", nodes[(dim_x - 1) as usize][(dim_y - 1) as usize].distance);
+    println!(
+        "Shortest distance to point: {}",
+        nodes[(dim_x - 1) as usize][(dim_y - 1) as usize].distance
+    );
 }
