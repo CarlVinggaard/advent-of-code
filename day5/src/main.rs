@@ -1,17 +1,23 @@
-use std::fs;
 use std::cmp;
+use std::fs;
 
 fn parse_line(l: &str) -> Line {
-    let points: Vec<(i16, i16)> = l.split(" -> ").map(|p| {
-        let numbers: Vec<i16> = p.split(",").map(|n| { n.parse::<i16>().unwrap() }).collect();
-        (numbers[0], numbers[1])
-    }).collect();
+    let points: Vec<(i16, i16)> = l
+        .split(" -> ")
+        .map(|p| {
+            let numbers: Vec<i16> = p.split(",").map(|n| n.parse::<i16>().unwrap()).collect();
+            (numbers[0], numbers[1])
+        })
+        .collect();
 
-    Line { p1: points[0], p2: points[1] }
+    Line {
+        p1: points[0],
+        p2: points[1],
+    }
 }
 
 struct CoordinateSystem {
-    coordinates: [[i16; 1000]; 1000]
+    coordinates: [[i16; 1000]; 1000],
 }
 
 impl CoordinateSystem {
@@ -32,7 +38,7 @@ impl CoordinateSystem {
 
 struct Line {
     p1: (i16, i16),
-    p2: (i16, i16)
+    p2: (i16, i16),
 }
 
 impl Line {
@@ -49,7 +55,7 @@ impl Line {
     }
 
     fn covers(&self) -> Vec<(i16, i16)> {
-        let mut points: Vec<(i16, i16)> = vec!();
+        let mut points: Vec<(i16, i16)> = vec![];
 
         if self.is_vertical() {
             let min = cmp::min(self.p1.1, self.p2.1);
@@ -59,7 +65,6 @@ impl Line {
                 points.push((self.p1.0 as i16, i as i16))
             }
         }
-        
         if self.is_horizontal() {
             let min = cmp::min(self.p1.0, self.p2.0);
             let max = cmp::max(self.p1.0, self.p2.0) + 1;
@@ -68,7 +73,6 @@ impl Line {
                 points.push((i, self.p1.1))
             }
         }
-        
         if self.is_diagonal() {
             let len = (self.p1.0 - self.p2.0).abs() + 1;
 
@@ -76,8 +80,16 @@ impl Line {
             let y_increases = self.p2.1 > self.p1.1;
 
             for i in 0..len {
-                let x = if x_increases { self.p1.0 + i } else { self.p1.0 - i };
-                let y = if y_increases { self.p1.1 + i } else { self.p1.1 - i };
+                let x = if x_increases {
+                    self.p1.0 + i
+                } else {
+                    self.p1.0 - i
+                };
+                let y = if y_increases {
+                    self.p1.1 + i
+                } else {
+                    self.p1.1 - i
+                };
                 points.push((x, y));
             }
         }
@@ -87,14 +99,19 @@ impl Line {
 }
 
 fn main() {
-     let filename = "./input.txt";
+    let filename = "./input.txt";
 
     let numbers_input = fs::read_to_string(filename).expect("There was a problem reading the file");
 
     let all_lines: Vec<Line> = numbers_input.split("\n").map(parse_line).collect();
-    let mut system = CoordinateSystem { coordinates: [[0; 1000]; 1000] };
+    let mut system = CoordinateSystem {
+        coordinates: [[0; 1000]; 1000],
+    };
 
-    let lines: Vec<&Line> = all_lines.iter().filter(|l| { l.is_horizontal() || l.is_vertical() || l.is_diagonal() }).collect();
+    let lines: Vec<&Line> = all_lines
+        .iter()
+        .filter(|l| l.is_horizontal() || l.is_vertical() || l.is_diagonal())
+        .collect();
 
     for line in lines {
         let covers = line.covers();

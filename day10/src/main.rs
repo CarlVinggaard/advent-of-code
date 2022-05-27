@@ -7,13 +7,12 @@ fn get_closing(c: &char) -> Option<char> {
         '{' => Some('}'),
         '[' => Some(']'),
         '<' => Some('>'),
-        _ => None
+        _ => None,
     }
 }
 
 fn check_is_corrupted(chars: &Chars) -> Option<char> {
-    let mut stack: Vec<char> = vec!();
-  
+    let mut stack: Vec<char> = vec![];
     for c in chars.clone() {
         if ['(', '{', '<', '['].contains(&c) {
             stack.push(c);
@@ -25,7 +24,7 @@ fn check_is_corrupted(chars: &Chars) -> Option<char> {
             if let Some(open) = open_opt {
                 if let Some(closed) = get_closing(&open) {
                     if c != closed {
-                        return Some(c)
+                        return Some(c);
                     }
                 }
             }
@@ -37,8 +36,7 @@ fn check_is_corrupted(chars: &Chars) -> Option<char> {
 
 // We assume that there are no corrupted lines passed to this function
 fn check_is_incomplete(chars: &Chars) -> Option<Vec<char>> {
-    let mut stack: Vec<char> = vec!();
-  
+    let mut stack: Vec<char> = vec![];
     for c in chars.clone() {
         if ['(', '{', '<', '['].contains(&c) {
             stack.push(c);
@@ -50,10 +48,10 @@ fn check_is_incomplete(chars: &Chars) -> Option<Vec<char>> {
     }
 
     if stack.len() == 0 {
-        return None
+        return None;
     }
 
-    let mut remaining: Vec<char> = stack.iter().map(|c| { get_closing(c).unwrap() }).collect();
+    let mut remaining: Vec<char> = stack.iter().map(|c| get_closing(c).unwrap()).collect();
 
     remaining.reverse();
 
@@ -65,11 +63,11 @@ fn calculate_score(line: Vec<char>) -> u64 {
 
     for c in line {
         match c {
-            ')' => { score = score * 5 + 1 },
-            ']' => { score = score * 5 + 2 },
-            '}' => { score = score * 5 + 3 },
-            '>' => { score = score * 5 + 4},
-            _ => ()
+            ')' => score = score * 5 + 1,
+            ']' => score = score * 5 + 2,
+            '}' => score = score * 5 + 3,
+            '>' => score = score * 5 + 4,
+            _ => (),
         }
     }
 
@@ -81,10 +79,10 @@ fn main() {
 
     let input = fs::read_to_string(filename).expect("There was a problem reading the file");
 
-    let lines: Vec<Chars> = input.split("\n").map(|l| { l.chars() }).collect();
+    let lines: Vec<Chars> = input.split("\n").map(|l| l.chars()).collect();
 
     let mut corrupted_sum: u32 = 0;
-    let mut scores: Vec<u64> = vec!();
+    let mut scores: Vec<u64> = vec![];
 
     for line in lines {
         let opt = check_is_corrupted(&line);
@@ -95,7 +93,7 @@ fn main() {
                 ']' => corrupted_sum += 57,
                 '}' => corrupted_sum += 1197,
                 '>' => corrupted_sum += 25137,
-                _ => ()
+                _ => (),
             }
         } else {
             let opt = check_is_incomplete(&line);

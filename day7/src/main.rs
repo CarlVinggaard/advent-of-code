@@ -1,5 +1,5 @@
-use std::fs;
 use std::cmp;
+use std::fs;
 
 fn factorial(n: i32) -> i32 {
     let mut total = 0;
@@ -27,8 +27,11 @@ fn main() {
     let filename = "./input.txt";
 
     let input = fs::read_to_string(filename).expect("There was a problem reading the file");
-    
-    let positions: Vec<u32> = input.split(",").map(|n| { n.parse::<u32>().unwrap() } ).collect();
+
+    let positions: Vec<u32> = input
+        .split(",")
+        .map(|n| n.parse::<u32>().unwrap())
+        .collect();
 
     let min = *positions.iter().min().unwrap();
     let max = *positions.iter().max().unwrap();

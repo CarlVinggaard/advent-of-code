@@ -2,7 +2,7 @@ use std::fs;
 
 #[derive(Clone, Copy)]
 struct Window {
-    values: (i32, i32, i32)
+    values: (i32, i32, i32),
 }
 
 impl Window {
@@ -22,11 +22,9 @@ impl Window {
 fn main() {
     let filename = "./input.txt";
 
-    let contents = fs::read_to_string(filename)
-        .expect("Something went wrong reading the file");
+    let contents = fs::read_to_string(filename).expect("Something went wrong reading the file");
 
     let lines = contents.split("\n");
-    
     let values: Vec<i32> = lines.map(|s: &str| -> i32 { s.parse().unwrap() }).collect();
 
     let mut count = 0;
@@ -36,13 +34,11 @@ fn main() {
     for value in values {
         let is_valid = window.is_valid();
         window.update(value);
-        
         let curr = window.sum();
 
         if curr > prev && is_valid {
             count = count + 1;
         }
-        
         prev = curr;
     }
 

@@ -2,7 +2,7 @@ use std::fs;
 
 struct Command<'a> {
     direction: &'a str,
-    value: i32
+    value: i32,
 }
 
 fn parse_command(command: &str) -> Command {
@@ -21,8 +21,7 @@ fn main() {
 
     let filename = "./input.txt";
 
-    let contents = fs::read_to_string(filename)
-        .expect("Something went wrong reading the file");
+    let contents = fs::read_to_string(filename).expect("Something went wrong reading the file");
 
     let lines: Vec<&str> = contents.split("\n").collect();
 
@@ -40,7 +39,9 @@ fn main() {
             "down" => {
                 aim = aim + cmd.value;
             }
-            _ => { println!("Received invalid command: {}", cmd.direction); }
+            _ => {
+                println!("Received invalid command: {}", cmd.direction);
+            }
         }
     }
 

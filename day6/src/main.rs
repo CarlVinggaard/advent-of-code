@@ -2,11 +2,11 @@ use std::fs;
 
 #[derive(Clone, Copy)]
 struct Fish {
-    days: u8
+    days: u8,
 }
 
 struct School {
-    fishes: Vec<Fish>
+    fishes: Vec<Fish>,
 }
 
 impl Fish {
@@ -67,12 +67,15 @@ impl School {
 fn main() {
     let filename = "./input.txt";
 
-    let input = fs::read_to_string(filename).expect("There was a problem reading the file"); 
+    let input = fs::read_to_string(filename).expect("There was a problem reading the file");
 
-    let fishes: Vec<Fish> = input.split(",").map(|n| {
-        let days = n.parse::<u8>().unwrap();
-        Fish { days }
-    }).collect();
+    let fishes: Vec<Fish> = input
+        .split(",")
+        .map(|n| {
+            let days = n.parse::<u8>().unwrap();
+            Fish { days }
+        })
+        .collect();
 
     let mut school = School { fishes };
 
@@ -81,5 +84,4 @@ fn main() {
     let count = school.get_count_after_cycles(cycles);
 
     println!("Number of fish after {} days: {}", cycles, count);
-
 }

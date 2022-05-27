@@ -1,10 +1,10 @@
-use std::fs;
 use std::fmt;
+use std::fs;
 
 fn every_contains(codes: &Vec<&str>, c: char) -> bool {
     for code in codes {
         if !code.contains(c) {
-            return false
+            return false;
         }
     }
 
@@ -20,12 +20,22 @@ struct Configuration<'a> {
     d: Option<char>,
     e: Option<char>,
     f: Option<char>,
-    g: Option<char>
+    g: Option<char>,
 }
 
 impl<'a> Configuration<'a> {
     fn new(input: &'a str, output: &'a str) -> Self {
-        Configuration { input, output, a: None, b: None, c: None, d: None, e: None, f: None, g: None }
+        Configuration {
+            input,
+            output,
+            a: None,
+            b: None,
+            c: None,
+            d: None,
+            e: None,
+            f: None,
+            g: None,
+        }
     }
 
     fn solve(&mut self) {
@@ -36,8 +46,8 @@ impl<'a> Configuration<'a> {
         let mut five: &str = "";
         let mut seven: &str = "";
         let mut eight: &str = "";
-        let mut chars_5: Vec<&str> = vec!();
-        let mut chars_6: Vec<&str> = vec!();
+        let mut chars_5: Vec<&str> = vec![];
+        let mut chars_6: Vec<&str> = vec![];
 
         // Sort codes
         for code in input {
@@ -46,8 +56,12 @@ impl<'a> Configuration<'a> {
                 3 => seven = code,
                 4 => four = code,
                 7 => eight = code,
-                5 => { chars_5.push(code); },
-                6 => { chars_6.push(code); },
+                5 => {
+                    chars_5.push(code);
+                }
+                6 => {
+                    chars_6.push(code);
+                }
                 _ => println!("Weird code found: {}", code),
             }
         }
@@ -63,7 +77,7 @@ impl<'a> Configuration<'a> {
         for c in String::from(four).chars() {
             if every_contains(&chars_5, c) {
                 self.d = Some(c);
-                break
+                break;
             }
         }
 
@@ -78,7 +92,7 @@ impl<'a> Configuration<'a> {
         for code in &chars_5 {
             if code.contains(self.b.unwrap()) {
                 five = code;
-                break
+                break;
             }
         }
 
@@ -108,17 +122,29 @@ impl<'a> Configuration<'a> {
 
     fn interpret(&self) -> Result<u32, &str> {
         if [self.b, self.e, self.c].contains(&None) {
-            return Err("Configuration not solved")
+            return Err("Configuration not solved");
         }
 
         let mut result = [0; 4];
 
         for (i, code) in self.output.split(" ").enumerate() {
             match code.len() {
-                2 => { result[i] = 1; continue },
-                3 => { result[i] = 7; continue },
-                4 => { result[i] = 4; continue },
-                7 => { result[i] = 8; continue },
+                2 => {
+                    result[i] = 1;
+                    continue;
+                }
+                3 => {
+                    result[i] = 7;
+                    continue;
+                }
+                4 => {
+                    result[i] = 4;
+                    continue;
+                }
+                7 => {
+                    result[i] = 8;
+                    continue;
+                }
                 6 => {
                     if !code.contains(self.e.unwrap()) {
                         result[i] = 9;
@@ -127,8 +153,8 @@ impl<'a> Configuration<'a> {
                     } else {
                         result[i] = 0
                     }
-                    continue
-                },
+                    continue;
+                }
                 5 => {
                     if code.contains(self.b.unwrap()) {
                         result[i] = 5
@@ -137,9 +163,9 @@ impl<'a> Configuration<'a> {
                     } else {
                         result[i] = 3
                     }
-                    continue
-                },
-                _ => println!("Weird code encountered!")
+                    continue;
+                }
+                _ => println!("Weird code encountered!"),
             }
         }
 
@@ -151,22 +177,32 @@ impl<'a> Configuration<'a> {
 
 impl<'a> fmt::Display for Configuration<'a> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f,
+        write!(
+            f,
             "a: {}, b: {}, c: {}, d: {}, e: {}, f: {}, g: {}",
-            self.a.unwrap(), self.b.unwrap(), self.c.unwrap(), self.d.unwrap(), self.e.unwrap(), self.f.unwrap(), self.g.unwrap()
+            self.a.unwrap(),
+            self.b.unwrap(),
+            self.c.unwrap(),
+            self.d.unwrap(),
+            self.e.unwrap(),
+            self.f.unwrap(),
+            self.g.unwrap()
         )
-    } 
+    }
 }
 
 fn main() {
     let filename = "./input.txt";
 
     let input = fs::read_to_string(filename).expect("There was a problem reading the file");
-    
-    let codes: Vec<(&str, &str)> = input.split("\n").map(|l| {
-        let vec: Vec<&str> = l.split(" | ").collect();
-        (vec[0].clone(), vec[1].clone())
-    } ).collect(); 
+
+    let codes: Vec<(&str, &str)> = input
+        .split("\n")
+        .map(|l| {
+            let vec: Vec<&str> = l.split(" | ").collect();
+            (vec[0].clone(), vec[1].clone())
+        })
+        .collect();
 
     let mut count = 0u32;
 
