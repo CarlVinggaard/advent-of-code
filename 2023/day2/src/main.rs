@@ -4,7 +4,7 @@ use std::fs;
 
 const LIMIT_RED: u32 = 12;
 const LIMIT_BLUE: u32 = 14;
-const LIMIT_GREEN: u32 = 15;
+const LIMIT_GREEN: u32 = 13;
 
 struct Draw {
     red: u32,
@@ -104,6 +104,22 @@ impl TryFrom<&str> for Game {
     }
 }
 
+impl Game {
+    fn min_counts(&self) -> (u32, u32, u32) {
+        let mut min_red = 0;
+        let mut min_blue = 0;
+        let mut min_green = 0;
+
+        for draw in self.draws.iter() {
+            min_red = std::cmp::max(min_red, draw.red);
+            min_blue = std::cmp::max(min_blue, draw.blue);
+            min_green = std::cmp::max(min_green, draw.green);
+        }
+
+        (min_red, min_blue, min_green)
+    }
+}
+
 fn main() -> Result<(), ParseError> {
     let filename = "./input.txt";
 
@@ -111,18 +127,22 @@ fn main() -> Result<(), ParseError> {
     let lines = contents.split("\n");
 
     let mut sum = 0;
+    let mut power = 0;
 
     for line in lines {
         let game = Game::try_from(line)?;
 
-        if game.draws.iter().any(|draw| !draw.is_valid()) {
-            continue;
+        if game.draws.iter().any(|draw| draw.is_valid()) {
+            sum += game.id;
         }
 
-        sum += game.id;
+        let (min_red, min_blue, min_green) = game.min_counts();
+
+        power += min_red * min_blue * min_green;
     }
 
-    println!("{sum}");
+    println!("Part 1: {sum}");
+    println!("Part 2: {power}");
 
     Ok(())
 }

@@ -77,6 +77,8 @@ fn main() {
                 .unwrap()
         };
 
+        println!("Value of line: {}", first * 10 + last);
+
         sum += first * 10 + last;
     }
 
